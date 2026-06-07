@@ -1,0 +1,25 @@
+{
+"name": "TEDDY-XMD Session",
+"description": "TEDDY-XMD Web Session Generator",
+"logo": "https://files.catbox.moe/adymbp.jpg",
+"repository": "https://github.com/Teddytech1/TEDDY-XMD",
+"keywords": [
+"TEDDY-XMD",
+"whatsapp-bot",
+"baileys",
+"session-generator"
+],
+"success_url": "/",
+"buildpacks": [
+{
+"url": "https://github.com/heroku/heroku-buildpack-nodejs#latest"
+}
+],
+"env": {
+"PORT": {
+"description": "Port for web app (3000, 4000, 5000, etc.)",
+"value": "5000",
+"required": false
+}
+}
+}
