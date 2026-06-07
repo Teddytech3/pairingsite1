@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEDDY-XMD PAIR CODE</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+background:#000;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
+
+#matrix{
+position:fixed;
+inset:0;
+z-index:-1;
+}
+
+#loader{
+position:fixed;
+inset:0;
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.loader{
+color:#00ff00;
+font-size:24px;
+font-weight:bold;
+text-shadow:0 0 10px #00ff00;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{50%{opacity:.5}}
+
+.container{
+width:90%;
+max-width:420px;
+padding:30px;
+border-radius:20px;
+background:rgba(0,255,0,.05);
+backdrop-filter:blur(15px);
+border:1px solid rgba(0,255,0,.25);
+text-align:center;
+box-shadow:0 0 25px rgba(0,255,0,.2);
+}
+
+.logo{
+font-size:30px;
+font-weight:900;
+color:#00ff00;
+text-shadow:0 0 15px #00ff00;
+}
+
+.subtitle{
+margin:10px 0 20px;
+color:#b6ffb6;
+}
+
+.input-container{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:12px;
+outline:none;
+}
+
+button{
+padding:14px 18px;
+border:none;
+border-radius:12px;
+background:#00ff00;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+box-shadow:0 0 15px #00ff00;
+}
+
+#pair{
+margin-top:20px;
+color:#fff;
+}
+
+.powered{
+margin-top:20px;
+color:#00ff00;
+font-weight:bold;
+}
+
+@media(max-width:500px){
+.input-container{
+flex-direction:column;
+}
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader" id="loadingText">LOADING...</div></div>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+<div class="logo">TEDDY-XMD PAIR</div>
+<div class="subtitle">Enter your number with country code</div>
+
+<div class="input-container">
+<input type="number" id="number" placeholder="2547XXXXXXXX">
+<button id="submit">ENTER</button>
+</div>
+
+<div id="pair"></div>
+
+<div class="powered">Powered By TEDDY-XMD</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+
+<script>
+const msgs=["LOADING...","CONNECTING...","VERIFYING SESSION...","TEDDY-XMD ONLINE ✓"];
+let i=0;
+const txt=document.getElementById("loadingText");
+
+const iv=setInterval(()=>{
+i++;
+if(i<msgs.length) txt.textContent=msgs[i];
+},1000);
+
+setTimeout(()=>{
+clearInterval(iv);
+const l=document.getElementById("loader");
+l.style.transition="1s";
+l.style.opacity="0";
+setTimeout(()=>l.remove(),1000);
+},4500);
+
+let a=document.getElementById("pair");
+let b=document.getElementById("submit");
+let c=document.getElementById("number");
+
+async function Copy(){
+let obj=document.getElementById("copy");
+await navigator.clipboard.writeText(obj.innerText.replace("CODE: ",""));
+obj.innerText="COPIED ✓";
+}
+
+b.addEventListener("click", async(e)=>{
+e.preventDefault();
+
+if(!c.value){
+a.innerHTML='<b style="color:#ff5555">Enter your WhatsApp number.</b>';
+return;
+}
+
+const bc=c.value.replace(/[^0-9]/g,"");
+a.innerHTML='<b style="color:#00ff00">Generating Pair Code...</b>';
+
+try{
+let {data}=await axios(`/code?number=${bc}`);
+let code=data.code || "Unavailable";
+a.innerHTML='<h2 id="copy" onclick="Copy()" style="cursor:pointer;color:#00ff00">CODE: '+code+'</h2>';
+}catch{
+a.innerHTML='<b style="color:#ff5555">Service Unavailable</b>';
+}
+});
+
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+resize();
+
+const chars="TEDDY-XMD0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const letters=chars.split("");
+const fontSize=14;
+let cols=Math.floor(canvas.width/fontSize);
+let drops=Array(cols).fill(1);
+
+function draw(){
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="#00ff00";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+const text=letters[Math.floor(Math.random()*letters.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+drops[i]=0;
+}
+drops[i]++;
+}
+}
+setInterval(draw,35);
+</script>
+
+</body>
+</html>
