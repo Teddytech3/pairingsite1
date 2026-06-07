@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEDDY-XMD SESSION</title>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "TEDDY-XMD"
+}
+</script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;
+    overflow:hidden;
+}
+
+#matrix{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+}
+
+#loader{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.loader-text{
+    color:#00ff00;
+    font-size:24px;
+    font-weight:900;
+    font-family:monospace;
+    text-shadow:0 0 15px #00ff00;
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    50%{opacity:.5}
+}
+
+.container{
+    width:90%;
+    max-width:430px;
+    text-align:center;
+    padding:35px;
+    border-radius:25px;
+    backdrop-filter:blur(15px);
+    background:rgba(0,255,0,.05);
+    border:1px solid rgba(0,255,0,.2);
+    box-shadow:0 0 25px rgba(0,255,0,.2);
+}
+
+.logo{
+    font-size:32px;
+    font-weight:900;
+    color:#00ff00;
+    text-shadow:0 0 15px #00ff00;
+}
+
+.subtitle{
+    color:#b6ffb6;
+    margin:10px 0 25px;
+    letter-spacing:2px;
+    font-size:14px;
+}
+
+.button{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    color:#fff;
+    padding:14px;
+    margin:12px 0;
+    border-radius:15px;
+    background:rgba(0,0,0,.6);
+    border:1px solid #00ff00;
+    transition:.3s;
+    font-weight:700;
+}
+
+.button:hover{
+    transform:translateY(-3px);
+    background:#00ff00;
+    color:#000;
+    box-shadow:0 0 20px #00ff00;
+}
+
+.note,.footer{color:#00ff00}
+.note{margin-top:15px}
+.footer{margin-top:20px;font-size:13px}
+</style>
+</head>
+<body>
+
+<div id="loader">
+    <div class="loader-text"><span id="loadingText">LOADING...</span></div>
+</div>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <div class="logo">TEDDY-XMD</div>
+    <div class="subtitle">TEDDY-XMD SESSION GENERATOR</div>
+
+    <a href="/qr" class="button" target="_blank">QR CODE</a>
+    <a href="/pair" class="button" target="_blank">PAIRING CODE</a>
+    <a href="https://github.com/Teddyxmd/TEDDY-XMD/fork" class="button" target="_blank">FORK TEDDY-XMD</a>
+    <a href="https://whatsapp.com/channel/0029Vb6NveDBPzjPa4vIRt3n" class="button" target="_blank">WHATSAPP CHANNEL</a>
+
+    <div class="note">HAVE ANY ERROR? CLICK BELOW</div>
+
+    <a href="https://wa.me/254799963583" class="button" target="_blank">ERROR SUPPORT</a>
+
+    <div class="footer">TEDDY-XMD © <span id="year"></span></div>
+</div>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const messages=[
+"LOADING...",
+"CONNECTING...",
+"ESTABLISHING SECURE CONNECTION...",
+"VERIFYING SESSION...",
+"TEDDY-XMD ONLINE ✓"
+];
+
+let idx=0;
+const loadingText=document.getElementById("loadingText");
+
+const iv=setInterval(()=>{
+ idx++;
+ if(idx<messages.length) loadingText.textContent=messages[idx];
+},1200);
+
+setTimeout(()=>{
+ clearInterval(iv);
+ const loader=document.getElementById("loader");
+ loader.style.transition="opacity 1s";
+ loader.style.opacity="0";
+ setTimeout(()=>loader.remove(),1000);
+},6000);
+
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+ canvas.width=window.innerWidth;
+ canvas.height=window.innerHeight;
+}
+resize();
+
+const chars="TEDDY-XMD0123456789TEDDYXMD/HACKSZアイウエオカキクケコサシスセソ".split("");
+const fontSize=14;
+let columns=Math.floor(canvas.width/fontSize);
+let drops=Array(columns).fill(1);
+
+function draw(){
+ ctx.fillStyle="rgba(0,0,0,0.05)";
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle="#00ff00";
+ ctx.font=fontSize+"px monospace";
+
+ for(let i=0;i<drops.length;i++){
+   const text=chars[Math.floor(Math.random()*chars.length)];
+   ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+   if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+      drops[i]=0;
+   }
+   drops[i]++;
+ }
+}
+setInterval(draw,35);
+
+window.addEventListener("resize",()=>{
+ resize();
+ columns=Math.floor(canvas.width/fontSize);
+ drops=Array(columns).fill(1);
+});
+</script>
+
+</body>
+</html>
