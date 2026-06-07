@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEDDY-XMD QR SESSION</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+overflow:hidden;
+}
+
+#matrix{
+position:fixed;
+inset:0;
+z-index:-1;
+}
+
+#loader{
+position:fixed;
+inset:0;
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+
+.loader{
+color:#00ff00;
+font-size:24px;
+font-weight:bold;
+text-shadow:0 0 15px #00ff00;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{50%{opacity:.5}}
+
+.card{
+width:90%;
+max-width:420px;
+padding:20px;
+text-align:center;
+border-radius:20px;
+background:rgba(0,255,0,.05);
+border:1px solid rgba(0,255,0,.2);
+backdrop-filter:blur(15px);
+box-shadow:0 0 25px rgba(0,255,0,.2);
+}
+
+.logo{
+color:#00ff00;
+font-size:30px;
+font-weight:900;
+text-shadow:0 0 15px #00ff00;
+margin-bottom:10px;
+}
+
+.subtitle{
+color:#b6ffb6;
+margin-bottom:15px;
+}
+
+.qr img{
+width:100%;
+max-width:320px;
+border-radius:15px;
+border:2px solid #00ff00;
+}
+
+.legend{
+color:#fff;
+margin-top:12px;
+}
+
+progress{
+width:100%;
+height:18px;
+margin-top:15px;
+}
+
+.reload{
+display:block;
+margin-top:20px;
+padding:12px;
+text-decoration:none;
+background:#00ff00;
+color:#000;
+font-weight:bold;
+border-radius:12px;
+}
+
+.reload:hover{
+box-shadow:0 0 20px #00ff00;
+}
+
+.footer{
+margin-top:15px;
+color:#00ff00;
+font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+<div class="loader" id="loadingText">LOADING...</div>
+</div>
+
+<canvas id="matrix"></canvas>
+
+<div class="card">
+<div class="logo">TEDDY-XMD QR SESSION</div>
+<div class="subtitle">Scan QR To Link Your WhatsApp</div>
+
+<div class="qr">
+<img id="qr-image" src="/server" alt="QR CODE">
+</div>
+
+<p class="legend" id="main">QR READY FOR SCAN</p>
+<p class="legend" id="legend">Scan within 30 seconds</p>
+
+<progress value="0" max="30" id="progressBar"></progress>
+
+<a href="javascript:history.go(0)" class="reload">RELOAD QR</a>
+
+<div class="footer">Powered By TEDDY-XMD</div>
+</div>
+
+<script>
+const msgs=[
+"LOADING...",
+"CONNECTING...",
+"VERIFYING SESSION...",
+"QR READY ✓"
+];
+
+let m=0;
+const t=document.getElementById("loadingText");
+
+const liv=setInterval(()=>{
+m++;
+if(m<msgs.length) t.textContent=msgs[m];
+},1000);
+
+setTimeout(()=>{
+clearInterval(liv);
+const loader=document.getElementById("loader");
+loader.style.transition="1s";
+loader.style.opacity="0";
+setTimeout(()=>loader.remove(),1000);
+},4500);
+
+let timeleft=30;
+const timer=setInterval(function(){
+if(timeleft<=0){
+clearInterval(timer);
+document.getElementById("progressBar").remove();
+document.getElementById("main").innerHTML="QR EXPIRED!";
+document.getElementById("legend").innerHTML="Reload Page";
+return;
+}
+document.getElementById("progressBar").value=30-timeleft;
+timeleft--;
+},1000);
+
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+resize();
+
+const chars="TEDDY-XMD0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const letters=chars.split("");
+const fontSize=14;
+let cols=Math.floor(canvas.width/fontSize);
+let drops=Array(cols).fill(1);
+
+function draw(){
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#00ff00";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+const text=letters[Math.floor(Math.random()*letters.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+drops[i]=0;
+}
+drops[i]++;
+}
+}
+
+setInterval(draw,35);
+</script>
+
+</body>
+</html>
